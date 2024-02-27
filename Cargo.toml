@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "iot-db-accessor",
+    "iot-explorer",
+    "iot-webserver",
+    "iot-data-bridge",
+    "sensor-simulator",
+]
+exclude = [
+    "picow-temperature-sensor"
+]
+
+[workspace.dependencies]
+anyhow = { version = "1.0.79" }
+sqlx = { version = "0.7.3", features = ["sqlite", "chrono", "macros", "runtime-tokio-native-tls"] }
+tokio = { version = "1.35.1", features = ["rt", "macros", "rt-multi-thread"] }
+dotenv = "0.15.0"
+iot_db_accessor = { path = "iot-db-accessor" }

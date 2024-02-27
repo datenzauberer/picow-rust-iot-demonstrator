@@ -1,0 +1,11 @@
+[build]
+target = "thumbv6m-none-eabi"
+
+[target.'cfg(all(target_arch = "arm", target_os = "none"))']
+# debug-probe:
+runner = "probe-rs run --chip RP2040"
+# UF2:
+# runner = "elf2uf2-rs --deploy --serial --verbose"
+
+[env]
+DEFMT_LOG = "debug"

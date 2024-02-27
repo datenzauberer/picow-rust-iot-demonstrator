@@ -1,0 +1,4 @@
+database.sqlite*
+target
+.idea
+*.bkp

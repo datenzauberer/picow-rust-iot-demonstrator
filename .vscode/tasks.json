@@ -1,0 +1,57 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      // WebServer for sensor-simulator-tcp, http://
+      {
+        "label": "01-iot-webserver",
+        "type": "shell",
+        "command": "bash",
+        "args": ["-c", "cargo run --bin iot-webserver; bash"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "label": "02-iot-explorer",
+        "type": "shell",
+        "command": "bash",
+        "args": ["-c", "cargo run --bin iot-explorer last --follow; bash"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "label": "03-iot-data-bridge",
+        "type": "shell",
+        "command": "bash",
+        "args": ["-c", "cargo run --bin iot-data-bridge; bash"],
+"group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "label": "04a-sensor-simulator",
+        "type": "shell",
+        "command": "bash",
+        "args": ["-c", "cargo run --bin sensor-simulator; bash"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "label": "04b-picow-temperature-sensor",
+        "type": "shell",
+        "command": "bash",
+        "args": ["-c", "cd picow-temperature-sensor; cargo run; bash"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+    ]
+  }
+  
