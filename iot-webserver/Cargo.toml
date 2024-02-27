@@ -7,12 +7,12 @@ edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true}
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true,  features = ["env-filter"] }
 axum = { version = "0.7.4", features = ["query"] }
 sqlx = { workspace = true, features = ["sqlite", "chrono", "macros", "runtime-tokio-native-tls"]}
-#rusqlite = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread"] }
 serde = { version = "1.0.195", features = ["derive"] }
-dotenv = { workspace = true }
-axum-macros = "0.4.1"
-tower-http = { version = "0.5.0", features = ["fs"] } # , "trace"
+dotenvy = { workspace = true }
+tower-http = { version = "0.5.0", features = ["fs", "trace", "cors"] } # , "trace"
 iot-db-accessor = { path = "../iot-db-accessor" }

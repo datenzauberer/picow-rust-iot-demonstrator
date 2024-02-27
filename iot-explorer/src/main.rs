@@ -1,4 +1,4 @@
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use std::env;
 
 use chrono::NaiveDateTime;
@@ -94,11 +94,10 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-#[allow(unused_must_use)]
 async fn create_test_data(pool: &Pool<Sqlite>) {
-    add_sensor_data(pool, to_naivedatetime("2024-01-01 09:00:00"), 10.00).await;
-    add_sensor_data(pool, to_naivedatetime("2024-01-01 09:30:00"), 11.00).await;
-    add_sensor_data(pool, to_naivedatetime("2024-01-01 09:59:00"), 12.00).await;
-    add_sensor_data(pool, to_naivedatetime("2024-01-01 10:00:00"), 13.00).await;
-    add_sensor_data(pool, chrono::Utc::now().naive_utc(), 10.00).await;
+    let _ = add_sensor_data(pool, to_naivedatetime("2024-01-01 09:00:00"), 10.00).await;
+    let _ = add_sensor_data(pool, to_naivedatetime("2024-01-01 09:30:00"), 11.00).await;
+    let _ = add_sensor_data(pool, to_naivedatetime("2024-01-01 09:59:00"), 12.00).await;
+    let _ = add_sensor_data(pool, to_naivedatetime("2024-01-01 10:00:00"), 13.00).await;
+    let _ = add_sensor_data(pool, chrono::Utc::now().naive_utc(), 10.00).await;
 }

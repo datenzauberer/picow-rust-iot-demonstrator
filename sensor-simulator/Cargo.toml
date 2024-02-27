@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tokio = { version = "1.0.0", features = ["full", "tracing"] }
-dotenv = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros", "rt-multi-thread"] }
+dotenvy = { workspace = true }
 anyhow = { workspace = true }
-iot-db-accessor = { path = "../iot-db-accessor" }
+#SMPRIO iot-db-accessor = { path = "../iot-db-accessor" }

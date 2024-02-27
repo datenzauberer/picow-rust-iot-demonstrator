@@ -6,7 +6,7 @@
         "label": "01-iot-webserver",
         "type": "shell",
         "command": "bash",
-        "args": ["-c", "cargo run --bin iot-webserver; bash"],
+        "args": ["-c", "RUST_LOG=INFO cargo run --bin iot-webserver; bash"],
         "group": {
           "kind": "build",
           "isDefault": true
@@ -26,7 +26,7 @@
         "label": "03-iot-data-bridge",
         "type": "shell",
         "command": "bash",
-        "args": ["-c", "cargo run --bin iot-data-bridge; bash"],
+        "args": ["-c", "RUST_LOG=INFO cargo run --bin iot-data-bridge; bash"],
 "group": {
           "kind": "build",
           "isDefault": true

@@ -8,7 +8,7 @@ fn main() {
     env::set_current_dir(&dir).expect("Failed to set current directory");
 
     // Load the .env file
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
 
     Command::new("pwd")
         .output()

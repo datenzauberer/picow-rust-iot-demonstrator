@@ -5,7 +5,7 @@
 
 #![warn(rust_2018_idioms)]
 
-use dotenv::dotenv;
+use dotenvy::dotenv;
 
 use std::env;
 use std::time::Duration;
@@ -13,12 +13,10 @@ use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
 use tokio::time::sleep;
 
-use std::error::Error;
-
 #[tokio::main]
-pub async fn main() -> Result<(), Box<dyn Error>> {
+pub async fn main() -> anyhow::Result<()> {
     dotenv().ok();
-    let serverurl = init_server_url();
+    let serverurl = get_server_url_from_env();
 
     let up_and_down = UpAndDown::new(10, 15);
     for value in up_and_down {
@@ -28,7 +26,7 @@ pub async fn main() -> Result<(), Box<dyn Error>> {
 }
 
 // Function to initialize server URL from environment variable.
-fn init_server_url() -> String {
+fn get_server_url_from_env() -> String {
     let mut serverurl =
         env::var("IOT_DATA_BRIDGE_URL").expect("env variable IOT_DATA_BRIDGE_URL not set");
     if serverurl.starts_with(':') {
@@ -45,13 +43,11 @@ async fn create_value(serverurl: &str, value: i32) {
     // Attempt to connect to the server.
     match TcpStream::connect(serverurl).await {
         Ok(mut stream) => {
-            // SMPRIO: Tracing
             println!("Temp: {} degrees", value);
 
             // Convert and send to server
             let msg = &value.to_be_bytes();
             match stream.write_all(msg).await {
-                // SMPRIO: Tracing
                 Ok(_) => println!("wrote to stream; len:{}", msg.len()),
                 Err(e) => eprintln!("failed to write to stream; error: {}", e),
             }

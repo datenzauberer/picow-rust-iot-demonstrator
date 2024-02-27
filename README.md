@@ -2,7 +2,8 @@
 
 # Overview
 
-This is a concise example showcasing the utilization of the Raspberry Pi Pico W (=PicoW) as an IoT sensor device in Rust. It serves as a visibility study highlighting the feasibility of employing the PicoW as an IoT device with Rust as the programming language. Additionally, it leverages Rust's async functionality.
+This project showcases the capabilities of Rust, a system programming language known for its safety and performance, in the realm of Internet of Things (IoT) by using a PicoW as the embedded device. It aims to provide a concies example of how Rust can be utilized to develop IoT applications. Leveraging the PicoW's Wi-Fi connectivity the project demonstrates real-world IoT scenarios, including sensor data collection, and seamless data communication over the internet. This initiative not only highlights Rust's suitability for embedded systems but also serves as a stepping stone for developers looking to explore IoT development.
+
 
 ![IoT Rust Demonstrator Architecture](./picow-iot.png "IoT Rust Demonstrator Architecture")
 
@@ -10,8 +11,8 @@ The setup consists of the components:
 
  * PicoW Sensor (`picow-temperature-sensor`)
 
-   As sample data the temperature is measure periodically.   
-   The value is forwarded to the IoT Broker via TCP.
+   As sample data the temperature is measured periodically.   
+   The value is forwarded to the IoT Data Bridge via Wifi and TCP.
  * Sensor Simulator (`sensor-simulator`)
 
    If no PicoW is available you can also use a sensor simulator.
@@ -67,6 +68,13 @@ cargo run --bin iot-webserver
 ```
 
 After starting the iot-webserver, you see link to the dashboard page, e.g.: http://localhost:3000
+
+
+To see what's going on behind the scenes start with tracing:
+
+```bash
+RUST_LOG=DEBUG cargo run --bin iot-webserver
+```
 
 ## Start IoT Explorer
 

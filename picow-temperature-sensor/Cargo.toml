@@ -49,7 +49,7 @@ pio = "0.2.1"
 rand = { version = "0.8.5", default-features = false }
 
 [build-dependencies]
-dotenv = "0.15.0"
+dotenvy = "0.15.7"
 if-addrs = "0.11"
 
 #[profile.release]

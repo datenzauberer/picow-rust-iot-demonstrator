@@ -3,7 +3,7 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::routing::{get, post};
 use axum::{Json, Router};
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use iot_db_accessor::{
     add_sensor_data, get_date_with_default, list_last_values_descending_since, SensorData,
 };
@@ -11,14 +11,39 @@ use serde::Deserialize;
 use sqlx::types::chrono::{self};
 use sqlx::SqlitePool;
 use std::env;
+use tower_http::cors::{Any, CorsLayer};
+use tower_http::trace::TraceLayer;
+
+use anyhow::Result;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() -> Result<()> {
     dotenv().ok();
-    let pool = SqlitePool::connect(&env::var("DATABASE_URL")?).await?;
+    tracing_init();
 
+    let pool = SqlitePool::connect(&env::var("DATABASE_URL")?).await?;
+    let app = create_router(pool);
+    // start the server, listening on confiured port WebServer IpAdress
+    let serverurl = &env::var("IOT_WEBSERVER_URL")?;
+    let listener = tokio::net::TcpListener::bind(serverurl).await.unwrap();
+    println!("URL to IoT Dashboart: http://{}", serverurl);
+    axum::serve(listener, app).await.unwrap();
+    Ok(())
+}
+
+fn tracing_init() {
+    use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+
+    let filter = EnvFilter::from_default_env();
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(filter)
+        .init();
+}
+
+fn create_router(pool: SqlitePool) -> axum::Router {
     // build our application with a route
-    let app = Router::new()
+    Router::new()
         .route("/", get(index))
         .nest(
             "/api",
@@ -27,14 +52,11 @@ async fn main() -> anyhow::Result<()> {
                 .route("/sensor_values_since", get(list_sensordata_since))
                 .route("/add_sensor_value", post(add_sensor_value)),
         )
-        .with_state(pool);
-
-    // start the server, listening on confiured port WebServer IpAdress
-    let serverurl = &env::var("IOT_WEBSERVER_URL")?;
-    let listener = tokio::net::TcpListener::bind(serverurl).await.unwrap();
-    println!("URL to IoT Dashboart: http://{}", serverurl);
-    axum::serve(listener, app).await.unwrap();
-    Ok(())
+        .with_state(pool)
+        // prevent cross site scripting
+        .layer(CorsLayer::new().allow_methods(Any).allow_origin(Any))
+        // enable tracing
+        .layer(TraceLayer::new_for_http())
 }
 
 pub struct AppError(anyhow::Error);

@@ -17,7 +17,6 @@ use static_cell::StaticCell;
 use {defmt_rtt as _, panic_probe as _};
 
 // For wifi only:
-
 use embassy_net::Config;
 use embassy_net::Stack;
 use embassy_net::StackResources;

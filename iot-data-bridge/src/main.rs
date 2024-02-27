@@ -1,40 +1,25 @@
-//! A "hello world" echo server with Tokio
-//!
-//! This server will create a TCP listener, accept connections in a loop, and
-//! write back everything that's read off of each TCP connection.
-//!
-//! Because the Tokio runtime uses a thread pool, each TCP connection is
-//! processed concurrently with all other TCP connections across multiple
-//! threads.
-//!
-//! To see this server in action, you can run this in one terminal:
-//!
-//!     cargo run --example echo
-//!
-//! and in another terminal you can run:
-//!
-//!     cargo run --example connect 127.0.0.1:6142
-//!
-//! Each line you type in to the `connect` terminal should be echo'd back to
-//! you! If you open up multiple terminals running the `connect` example you
-//! should be able to see them all make progress simultaneously.
-
 #![warn(rust_2018_idioms)]
 
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use tokio::io::AsyncReadExt;
 use tokio::net::TcpListener;
 
+use tracing::{info, warn};
+
 use std::env;
-use std::error::Error;
 use std::sync::Arc;
 
 use iot_db_accessor::add_sensor_data;
 use sqlx::SqlitePool;
 
+const BUFFER_SIZE: usize = 1024;
+const SENSOR_DATA_SIZE: usize = 4;
+
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> anyhow::Result<()> {
     dotenv().ok();
+    tracing_init();
+
     let pool = SqlitePool::connect(&env::var("DATABASE_URL")?).await?;
     let pool = Arc::new(pool);
 
@@ -54,34 +39,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
         // Asynchronously wait for an inbound socket.
         let (mut socket, _) = listener.accept().await?;
 
-        // And this is where much of the magic of this server happens. We
-        // crucially want all clients to make progress concurrently, rather than
-        // blocking one on completion of another. To achieve this we use the
-        // `tokio::spawn` function to execute the work in the background.
-        //
-        // Essentially here we're executing a new task to run concurrently,
-        // which will allow all of our clients to be processed concurrently.
-
         tokio::spawn(async move {
-            let mut buf = vec![0; 1024];
+            let mut buf = vec![0; BUFFER_SIZE];
 
-            // In a loop, read data from the socket and write the data back.
             loop {
-                let n = socket
-                    .read(&mut buf)
-                    .await
-                    .expect("failed to read data from socket");
+                let n = socket.read(&mut buf).await;
 
                 match n {
-                    0 => return, // When the client is disconnected return
-                    4 => {
-                        // Sensorvalue
-                        let temp = f32::from_be_bytes([buf[0], buf[1], buf[2], buf[3]]);
-                        let _id = add_sensor_value(&pool, temp).await;
+                    Ok(SENSOR_DATA_SIZE) => {
+                        // Sensorvalue contains 4 byte
+                        process_sensor_data(&pool, &buf).await;
                     }
-                    _ => {
+                    Ok(0) => return, // Client disconnected
+                    Err(_) => {
+                        warn!("Failed to read data from socket");
+                    }
+                    Ok(n) => {
                         let response = String::from_utf8_lossy(&buf[..n]);
-                        println!(
+                        warn!(
                             "Invalid sensor data: could not process {} (len: {})",
                             response, n
                         );
@@ -92,9 +67,23 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 }
 
-async fn add_sensor_value(pool: &SqlitePool, value: f32) -> Result<(), Box<dyn Error>> {
-    println!("received value from sensor: {}", value);
-    let value = value.into();
-    add_sensor_data(pool, chrono::Utc::now().naive_utc(), value).await?;
-    Ok(())
+fn tracing_init() {
+    use tracing_subscriber::{fmt, prelude::*, EnvFilter};
+
+    let filter = EnvFilter::from_default_env();
+    tracing_subscriber::registry()
+        .with(fmt::layer())
+        .with(filter)
+        .init();
+}
+
+async fn process_sensor_data(pool: &SqlitePool, data: &[u8]) {
+    let temp = f32::from_be_bytes([data[0], data[1], data[2], data[3]]);
+    // PicoW AnalogDigitalConverter only supports f32, but the backend supports f64
+    let value = temp.into();
+    info!("received value from sensor: {}", value);
+    let result = add_sensor_data(pool, chrono::Utc::now().naive_utc(), value).await;
+    if let Err(e) = result {
+        warn!("An error occurred: {:?}", e);
+    }
 }

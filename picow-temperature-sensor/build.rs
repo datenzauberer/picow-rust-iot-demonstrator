@@ -53,7 +53,7 @@ fn load_dotenv_from_parent_directory() {
         .expect("Failed to find parent directory");
     // Append the .env filename to the parent directory path
     let dotenv_path = parent_dir.join(".env");
-    dotenv::from_path(dotenv_path).expect("Failed to load .env file");
+    dotenvy::from_path(dotenv_path).expect("Failed to load .env file");
 }
 
 // Configuration for the Data Bridge Endpoint
