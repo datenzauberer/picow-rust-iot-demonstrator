@@ -2,7 +2,7 @@
 
 # Overview
 
-This project showcases the capabilities of Rust, a system programming language known for its safety and performance, in the realm of Internet of Things (IoT) by using a PicoW as the embedded device. It aims to provide a concies example of how Rust can be utilized to develop IoT applications. Leveraging the PicoW's Wi-Fi connectivity the project demonstrates real-world IoT scenarios, including sensor data collection, and seamless data communication over the internet. This initiative not only highlights Rust's suitability for embedded systems but also serves as a stepping stone for developers looking to explore IoT development.
+This project showcases the capabilities of Rust, a system programming language known for its safety and performance, in the realm of Internet of Things (IoT) by using a PicoW as the embedded device. It aims to provide a concise example of how Rust can be utilized to develop IoT applications. Leveraging the PicoW's Wi-Fi connectivity the project demonstrates real-world IoT scenarios, including sensor data collection, and seamless data communication over the internet. This initiative not only highlights Rust's suitability for embedded systems but also serves as a stepping stone for developers looking to explore IoT development.
 
 
 ![IoT Rust Demonstrator Architecture](./picow-iot.png "IoT Rust Demonstrator Architecture")
