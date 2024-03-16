@@ -19,19 +19,15 @@ The setup consists of the components:
  * IoT Data Bridge (`iot-data-bridge`)
 
    Acts as a bridge for data, receiving temperature readings from the sensor and forwarding them to a sqlite database.
- * IoT WebServer (`iot-webserver`)
-
-   serves the web services and web page.
  * Sqlite DB
 
    As datastorage a filebased sqlite database is used accessed from rust with `iot-db-accessor`.
-   
+ * IoT WebServer and WebPage (`iot-webserver`)
+
+   serves the web services and a web page with a dashboard of the sensor data.
  * IoT Explorer (`iot-explorer`)
 
    A CLI application that lists the sensor data and can also create testdata.
- * IoT WebPage (`iot-webserver`)
-
-   serves a dashboard of the sensor data.  
    
 When new sensor data becomes available in the database, the `iot-explorer` and "IoT WebPage" automatically update whenever they are open.
 
@@ -59,15 +55,15 @@ cargo install sqlx-cli
 cargo build
 ```
 
-## Start iot-web-server
+## Start `iot-webserver`
 
-Start in one bash terminal the iot-webserver (or with vscode excute task "01-iot-webserver"):
+Start in one bash terminal the `iot-webserver` (or with vscode excute task "01-iot-webserver"):
 
 ```bash
 cargo run --bin iot-webserver
 ```
 
-After starting the iot-webserver, you see link to the dashboard page, e.g.: http://localhost:3000
+After starting the iot-webserver, you will see a link to the dashboard page, e.g.: http://localhost:3000
 
 
 To see what's going on behind the scenes start with tracing:
@@ -76,9 +72,9 @@ To see what's going on behind the scenes start with tracing:
 RUST_LOG=DEBUG cargo run --bin iot-webserver
 ```
 
-## Start IoT Explorer
+## Start `iot-explorer`
 
-You can also view the latest data via cli ((or with vscode excute task "02-iot-explorer")):
+You can also view the latest data via cli (or with vscode excute task "02-iot-explorer"):
 
 ```bash
 cargo run --bin iot-explorer last --follow
@@ -88,9 +84,9 @@ With `cargo run --bin iot-explorer` you see the help page.
 
 With `cargo run --bin iot-explorer help last` you see the help page for the last command.
 
-## Start iot-data-bridge
+## Start `iot-data-bridge`
 
-Start in one bash terminal the iot-data-bridge (or with vscode excute task "03-iot-data-bridge"):
+Start in one bash terminal the `iot-data-bridge` (or with vscode excute task "03-iot-data-bridge"):
 
 ```bash
 cargo run --bin iot-data-bridge
@@ -98,9 +94,11 @@ cargo run --bin iot-data-bridge
 
 ## Start Sensor Data Producer (PicoW or Simulator)
 
-⚠️ **Attention:** Data acquisition must use only one source: a) `sensor-simulator`, OR b) `~picow-temperature-sensor`
+⚠️ **Attention:** Data acquisition must use only one source: a) `sensor-simulator`, OR b) `picow-temperature-sensor`
 
 ### a) `sensor-simulator`
+
+Start in one bash terminal the `sensor-simulator` (or with vscode excute task "04a-sensor-simulator"):
 
 ```bash
 cargo run --release --bin sensor-simulator
@@ -112,18 +110,20 @@ This project is not part of the cargo workspace.
 
 #### Setup the Rust Environment for PicoW
 
-Please ensure that you have setup the rust development environment for the PicoW and test it, e.g. blinky example from the embassy project (details [here](./picow-temperature-sensor/README.md))
+Please ensure that you have set up the rust development environment for the PicoW and tested it, e.g. by running the blinky example from the embassy project (details [here](./picow-temperature-sensor/README.md))
 
 ### Edit `.env` file
 
-⚠️ **WARNING:** Before you can use the PicoW project, please ensure that you **edit the `.env` file and complete the TODOs**.
+⚠️ **WARNING:** Before you can use the PicoW project, please ensure that you **edit the `.env` file and complete the TODOs**, i.e. set WIFI SSID and password for the WLAN that is used to connect to the PicoW as well as the installation directory of embassy.
 
 ### Build and flash the PicoW
+
+Use the following terminal commands (or with vscode excute task "04b-picow-temperature-sensor"):
 
 ```bash
 cd picow-temperature-sensor
 cargo run --release
 ```
 
-After flashing the pico tries to periodically send data to the `iot-data-bridge`. To stop this disconnect the power cable.
+After flashing the Pico tries to periodically send data to the `iot-data-bridge`. To stop this, disconnect the power cable.
 

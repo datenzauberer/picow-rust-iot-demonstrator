@@ -1,7 +1,6 @@
 # Raspberry Pico W Temperatur Sensor
 
-This is a simple iot demonstrator. It reads the onboard temperature sensor 
-and sends the measured value via tcp to an server (`iot-data-brige`).
+This is a simple IoT demonstrator. It reads the onboard temperature sensor and sends the measured value via TCP to a server (`iot-data-brige`).
 
 # Raspberry Pi Pico W Rust Embedded Development Setup Guide
 
@@ -9,15 +8,15 @@ and sends the measured value via tcp to an server (`iot-data-brige`).
 
 This guide will walk you through setting up your Raspberry Pi Pico W for Rust embedded development. 
 
-There are two ways to setup your environment;
- * debug-probe: Pico connected to a Debug Probe (referred as debug-probe). For debugging the application, this is mandatory. Due to the ease of development option, "debug-probe" is preferred way ([details](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html)).
- * UF2: Pico connected directly to the Host computer. ⚠️ **Attention: No debugging is possible. Before flashing the pico it has to be in BOOTSEL-MODE: Hold down the BOOTSEL button when you plug in your Pico. ([details](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#resetting-flash-memory))**.
+There are two ways to set up your environment:
+ * `debug-probe`: Pico connected to a Debug Probe (referred as `debug-probe`). For debugging the application, this is mandatory. Due to the ease of development option, `debug-probe` is preferred way ([details](https://www.raspberrypi.com/documentation/microcontrollers/debug-probe.html)).
+ * `UF2`: Pico connected directly to the host computer. ⚠️ **Attention: No debugging is possible. Before flashing the pico it has to be in BOOTSEL-MODE: Hold down the BOOTSEL button when you plug in your Pico. ([details](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#resetting-flash-memory))**.
 
 Please follow this guide according your option.
 
 ### Import Links and Documents:
 
-[Raspberry pi pico](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html)
+[Raspberry Pi Pico](https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html)
 
 [Getting Started with Pico pdf](https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf)
 
@@ -29,7 +28,7 @@ Before you begin, ensure you have the following installed on your development ma
 - [Rust](https://www.rust-lang.org/tools/install)
 - [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-
+- [Rust Embedded Tools for Raspberry Pi Pico](https://github.com/rp-rs/rp-hal?tab=readme-ov-file#getting-started)
 
 ## 1. Install Prerequisites
 
@@ -43,11 +42,19 @@ Open a terminal and install the `thumbv6m-none-eabi` target for cross-compilatio
 rustup target add thumbv6m-none-eabi
 ```
 
-## 3. SMPRIO: Clone repo embassy
+## 3. Set Up `embassy`
 
-## 3. Configure `.cargo/config.toml`
+Clone the repo as described [here](https://embassy.dev/book/dev/getting_started.html). 
 
-Edit the file `.cargo/config.toml` so that only one runner is configured. Comment the other.
+Run the `blinky` example in `embassy/examples/rp` by executing `cargo run --bin blinky --release`. 
+
+**Note:** The onboard LED on the PicoW is not connected to GPIO 25 as on the Pico without W. So you either have to connect an LED or accept, that you cannot see the output...
+
+**Note:** Depending on your setup, you have to adapt the example's `.cargo/config.toml` as described in the next section for our project here.
+
+## 4. Configure `.cargo/config.toml`
+
+Edit the file [`.cargo/config.toml`](.cargo/config.toml) so that only one runner is configured. Comment the other.
 
 ### a) debug-probe (default)
 
@@ -61,10 +68,6 @@ runner = "probe-rs run --chip RP2040"
 runner = "elf2uf2-rs --deploy --serial --verbose"
 ```
 
-## 4. Build and flash the PicoW
+## 5. Build and flash the PicoW
 
-```bash
-cd picow-temperature-sensor
-cargo run --release
-```
-
+see [`../README.md`](../README.md)
