@@ -108,6 +108,19 @@ cargo run --release --bin sensor-simulator
 
 This project is not part of the cargo workspace.
 
+#### ⚠️ Preconditions for the Wi-Fi
+
+To provision the Wi-Fi for the PicoW, please consider the following preconditions for the Wi-Fi:
+
+- **Security:** Ensure your Wi-Fi network supports WPA2 encryption.
+- **Network Restrictions:**
+  - **Captive Portal:** If your network requires a login page (captive portal) after connecting, the Pico W may not be able to automatically handle it.
+  - **Network Access Control (NAC) / MAC Address Filtering:** These security features may prevent the Pico W from joining the network unless its MAC address is manually authorized.
+
+Workaround for Restrictions:
+
+If you encounter network restrictions, consider setting up a Wi-Fi bridge on your host computer with a Wi-Fi adapter (stick) to create an unrestricted network for the PicoW to connect to.
+
 #### Setup the Rust Environment for PicoW
 
 Please ensure that you have set up the rust development environment for the PicoW and tested it, e.g. by running the blinky example from the embassy project (details [here](./picow-temperature-sensor/README.md))
